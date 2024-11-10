@@ -6,10 +6,10 @@ const { celebrate, Segments } = require('celebrate');
 
 const router = Router();
 
-// const orderRouteValidator = celebrate({
-//   [Segments.BODY]: orderSchema
-// });
+const orderRouteValidator = celebrate({
+  [Segments.BODY]: orderSchema
+});
 
-router.post('/', createOrder);
+router.post('/', orderRouteValidator, createOrder);
 
 export default router;

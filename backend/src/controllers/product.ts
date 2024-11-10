@@ -1,16 +1,25 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import Product from '../models/product';
+import ConflictError from '../errors/conflict-error';
 
-export const getProducts = (req: Request, res: Response) => {
+export const getProducts = (req: Request, res: Response, next: NextFunction) => {
     return Product.find({})
       .then(products => res.send({ items: products, total: products.length }))
-      .catch(() => res.status(500).send({ message: 'Произошла ошибка' }))
+      .catch((error) => {
+        return next(error)
+      })
 }
 
-export const createProduct = (req: Request, res: Response) => {
+export const createProduct = (req: Request, res: Response, next: NextFunction) => {
     const product = req.body;
+    console.log(req.body);
 
     return Product.create(product)
       .then(product => res.send({ items: product }))
-      .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+      .catch((error) => {
+        if (error instanceof Error && error.message.includes('E11000')) {
+          return next(new ConflictError('Поле title должно быть уникальным'));
+        }
+        return next(error);
+      })
 }
