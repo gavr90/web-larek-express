@@ -31,7 +31,7 @@ const createOrder = async (
       throw new BadRequestError('Некорректная сумма заказа');
     }
 
-    return res.send({ id: faker.string.uuid(), total: productsPrice });
+    return res.status(201).send({ id: faker.string.uuid(), total: productsPrice });
   } catch (error) {
     return next(error);
   }
