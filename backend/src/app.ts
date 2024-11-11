@@ -5,10 +5,11 @@ import bodyParser from 'body-parser';
 import routes from './routes/index';
 import errorHandler from './middlwares/error-handler';
 import { requestLogger, errorLogger } from './middlwares/logger';
+import { PORT, DB_ADDRESS } from './config';
 
 const cors = require('cors');
 
-mongoose.connect('mongodb://127.0.0.1:27017/weblarek');
+mongoose.connect(DB_ADDRESS);
 
 const app = express();
 
@@ -20,4 +21,4 @@ app.use(routes);
 
 app.use(errorLogger);
 app.use(errorHandler);
-app.listen(3000, () => { console.log('listening on port 3000'); });
+app.listen(PORT, () => { console.log(`listening on port ${PORT}`); });
