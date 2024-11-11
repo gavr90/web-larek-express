@@ -30,7 +30,7 @@ const imageSchema = Joi.object({
 
 export const productSchema = Joi.object({
   title: Joi.string().min(2).max(30).required(),
-  image: imageSchema,
+  image: imageSchema.required(),
   category: Joi.string().required(),
   description: Joi.string(),
   price: Joi.number().allow(null),
