@@ -1,31 +1,40 @@
 import { Request, Response, NextFunction } from 'express';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { faker } from '@faker-js/faker';
 import Product from '../models/product';
 import BadRequestError from '../errors/bad-request-error';
 
-export const createOrder = async (req: Request, res: Response, next: NextFunction) => {
+const createOrder = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { total, items } = req.body;
   try {
-    const products = await Product.find({ '_id': { $in: items } });
+    const products = await Product.find({ _id: { $in: items } });
 
     if (products.length !== items.length) {
-      return new BadRequestError('Товара не существует');
+      throw new BadRequestError('Некорректный товар');
     }
 
     products.forEach((product) => {
       if (product.price === null) {
-        return new BadRequestError('Товар не продается');
+        throw new BadRequestError('Товар не продается');
       }
     });
 
-    const productsPrice = products.reduce((sum, product) => sum + product.price, 0);
+    const productsPrice = products.reduce(
+      (sum, product) => sum + product.price,
+      0,
+    );
     if (total !== productsPrice) {
-      return new BadRequestError('Некорректная сумма заказа');
+      throw new BadRequestError('Некорректная сумма заказа');
     }
 
-    return res.send({ id: faker.string.uuid(), total: total });
-
+    return res.send({ id: faker.string.uuid(), total: productsPrice });
   } catch (error) {
-    return next(error)
+    return next(error);
   }
-}
+};
+
+export default createOrder;

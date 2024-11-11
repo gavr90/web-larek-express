@@ -1,4 +1,4 @@
-import Joi from 'joi'
+import Joi from 'joi';
 
 export enum PaymentType {
   Card = 'card',
@@ -15,14 +15,23 @@ export interface IOrder {
 }
 
 export const orderSchema = Joi.object({
-  items: Joi.array().items(
-    Joi.object({
-      _id: Joi.string().required(),
-    })
-  ).required(),
+  items: Joi.array().items(Joi.string().required()).required(),
   total: Joi.number().required(),
   payment: Joi.string().valid(...Object.values(PaymentType)).required(),
   email: Joi.string().email().required(),
   phone: Joi.string().required(),
-  adress: Joi.string().required(),
+  address: Joi.string().required(),
+});
+
+const imageSchema = Joi.object({
+  fileName: Joi.string().required(),
+  originalName: Joi.string().required(),
+});
+
+export const productSchema = Joi.object({
+  title: Joi.string().min(2).max(30).required(),
+  image: imageSchema,
+  category: Joi.string().required(),
+  description: Joi.string(),
+  price: Joi.number().allow(null),
 });

@@ -1,10 +1,16 @@
 import { Router } from 'express';
- import { createProduct, getProducts } from '../controllers/product';
+import { productSchema } from '../middlwares/validations';
+import { createProduct, getProducts } from '../controllers/product';
+
+const { celebrate, Segments } = require('celebrate');
 
 const router = Router();
 
-router.get('/', getProducts);
+const productRouteValidator = celebrate({
+  [Segments.BODY]: productSchema,
+});
 
-router.post('/', createProduct);
+router.get('/', getProducts);
+router.post('/', productRouteValidator, createProduct);
 
 export default router;
